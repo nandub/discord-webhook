@@ -24,9 +24,9 @@
   },
   "dependencies": {
     "eris": "github:abalabahaha/eris",
+    "forky": "0.3.0",
     "github-webhook-handler": "0.6.0",
-    "http": "0.0.0",
-    "request": "2.74.0"
+    "http": "0.0.0"
   },
   "devDependencies": {
     "eslint": "3.2.2",
