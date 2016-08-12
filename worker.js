@@ -18,6 +18,16 @@ var server = http.createServer(function (req, res) {
   });
 });
 
+setInterval(function() {
+  http.get(config.web.ka.url); // insert your application's URL here
+}, 22*(60*1000)); //every 22 minutes to keep the bot from sleeping which breaks it
+
+var keepalive = http.createServer(function(request, response) {
+  response.writeHead(200, {"Content-Type": "text/plain"});
+  response.write('Pong!');
+  response.end();
+});
+
 var bot = new Eris(config.discord.token, {
   autoReconnect: true,
   disableEveryone: true,
@@ -52,8 +62,10 @@ bot.connect().catch(console.error);
 
 bot.on('ready', function () {
   console.log('Connected to Discord');
-  console.log('Listening on port: ' + config.web.port);
   server.listen(config.web.port);
+  console.log('Webhook server listening on port: ' + config.web.port);
+  keepalive.listen(config.web.ka.port);
+  console.log('Keepalive server listening on port: ' + config.web.ka.port);
 });
 
 bot.on('disconnected', function () {
