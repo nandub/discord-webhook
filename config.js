@@ -19,5 +19,6 @@ if (process.env.HEROKU_APP) {
 } else {
   config.web.cname = 'localhost';
 }
-config.web.ka.url = 'http://' + config.web.cname + ':' +  config.web.ka.port;
+config.web.ka.url = 'http://' + config.web.cname + ':' + config.web.ka.port;
+
 module.exports = config;
