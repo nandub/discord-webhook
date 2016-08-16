@@ -8,17 +8,18 @@ var forky = require('forky');
 var Eris = require('eris');
 var CreateHandler = require('github-webhook-handler');
 var config = require('./config');
+var route = require('./route');
 var handler = CreateHandler({path: '/webhook', secret: config.github.token});
 
-var server = http.createServer(function (req, res) {
-  handler(req, res, function (err) {
-    if (err) {
-      console.log(err);
-    }
-    res.statusCode = 404;
-    res.end('no such location');
-  });
-});
+var pingHandler = function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/html'});
+  res.write('Pong!');
+  res.end();
+};
+
+var middleware = route.comp([handler, route.wrap('/ping', pingHandler)]);
+
+var server = http.createServer(middleware);
 
 var bot = new Eris(config.discord.token, {
   autoReconnect: true,
@@ -50,48 +51,6 @@ var bot = new Eris(config.discord.token, {
     VOICE_STATE_UPDATE: true}
 });
 
-function wrapHandler(path, cb) {
-  return function (req, res, next) {
-    if (req.url === path) {
-        return cb(req, res);
-    }
-
-    return next();
-  };
-}
-
-function notFoundHandler(req, res) {
-  res.writeHead(404, {'Content-Type': 'text/html'});
-  res.write('No Path found');
-  res.end();
-}
-
-function compose(mw) {
-  return function (req, res) {
-    let next = function () {
-      notFoundHandler.call(this, req, res);
-    };
-
-    let i = mw.length;
-    while (i) {
-      i -= 1;
-      let thisMiddleware = mw[i];
-      let nextMiddleware = next;
-      next = function () {
-        thisMiddleware.call(this, req, res, nextMiddleware);
-      };
-    }
-
-    return next();
-  };
-}
-
-var keepalive = http.createServer(compose([wrapHandler('/ping', function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/html'});
-  res.write('Pong!');
-  res.end();
-})]));
-
 setInterval(function() {
   http.get(config.web.ka.url);
 }, 22 * (60 * 1000));
@@ -102,8 +61,6 @@ bot.on('ready', function () {
   console.log('Connected to Discord');
   server.listen(config.web.port);
   console.log('Webhook server listening on port: ' + config.web.port);
-  keepalive.listen(config.web.ka.port);
-  console.log('Keepalive ' + config.web.cname + ' server listening on port: ' + config.web.ka.port);
 });
 
 bot.on('disconnected', function () {
