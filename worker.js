@@ -1,5 +1,7 @@
 /* eslint new-cap: [0] */
 /* eslint no-console: ["error", { allow: ["log", "warn", "error"] }] */
+/* eslint prefer-reflect: ["error", { "exceptions": ["call"] }]*/
+/* eslint-disable func-style, vars-on-top*/
 
 var http = require('http');
 var forky = require('forky');
@@ -48,11 +50,47 @@ var bot = new Eris(config.discord.token, {
     VOICE_STATE_UPDATE: true}
 });
 
-var keepalive = http.createServer(function(request, response) {
-  response.writeHead(200, {'Content-Type': 'text/plain'});
-  response.write('Pong!');
-  response.end();
-});
+function wrapHandler(path, cb) {
+  return function (req, res, next) {
+    if (req.url === path) {
+        return cb(req, res);
+    }
+
+    return next();
+  };
+}
+
+function notFoundHandler(req, res) {
+  res.writeHead(404, {'Content-Type': 'text/html'});
+  res.write('No Path found');
+  res.end();
+}
+
+function compose(mw) {
+  return function (req, res) {
+    let next = function () {
+      notFoundHandler.call(this, req, res);
+    };
+
+    let i = mw.length;
+    while (i) {
+      i -= 1;
+      let thisMiddleware = mw[i];
+      let nextMiddleware = next;
+      next = function () {
+        thisMiddleware.call(this, req, res, nextMiddleware);
+      };
+    }
+
+    return next();
+  };
+}
+
+var keepalive = http.createServer(compose([wrapHandler('/ping', function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/html'});
+  res.write('Pong!');
+  res.end();
+})]));
 
 setInterval(function() {
   http.get(config.web.ka.url);
