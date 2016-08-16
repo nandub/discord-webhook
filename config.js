@@ -14,7 +14,7 @@ if (process.env.HEROKU_APP) {
 } else {
   config.web.cname = process.env.CNAME || 'localhost';
 }
-config.web.url = 'https://' + config.web.cname;
+config.web.url = 'http://' + config.web.cname + '/ping';
 config.web.port = process.env.PORT || 1974;
 config.web.workers = process.env.WEB_CONCURRENCY || 1;
 
