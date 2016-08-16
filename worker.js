@@ -13,9 +13,12 @@ var handler = CreateHandler({path: '/webhook', secret: config.github.token});
 
 var githubHandler = function (req, res) {
   handler(req, res, function (err) {
-    res.statusCode = 404
-    res.end('no such location')
-  })
+    if (err) {
+      console.error(err);
+    }
+    res.statusCode = 404;
+    res.end('no such location');
+  });
 };
 
 var pingHandler = function (req, res) {
