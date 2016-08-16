@@ -11,13 +11,20 @@ var config = require('./config');
 var route = require('./route');
 var handler = CreateHandler({path: '/webhook', secret: config.github.token});
 
+var githubHandler = function (req, res) {
+  handler(req, res, function (err) {
+    res.statusCode = 404
+    res.end('no such location')
+  })
+};
+
 var pingHandler = function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/html'});
   res.write('Pong!');
   res.end();
 };
 
-var middleware = route.comp([handler, route.wrap('/ping', pingHandler)]);
+var middleware = route.comp([route.wrap('/webhook', githubHandler), route.wrap('/ping', pingHandler)]);
 
 var server = http.createServer(middleware);
 
