@@ -59,7 +59,7 @@ var bot = new Eris(config.discord.token, {
 });
 
 setInterval(function() {
-  http.get(config.web.ka.url);
+  http.get(config.web.url);
 }, 22 * (60 * 1000));
 
 bot.connect().catch(console.error);
