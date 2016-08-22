@@ -17,5 +17,6 @@ if (process.env.HEROKU_APP) {
 config.web.url = 'http://' + config.web.cname + '/ping';
 config.web.port = process.env.PORT || 1974;
 config.web.workers = process.env.WEB_CONCURRENCY || 1;
+config.web.path = process.env.WEB_PATH || '/webhook';
 
 module.exports = config;

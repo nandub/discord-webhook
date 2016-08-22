@@ -9,7 +9,7 @@ var Eris = require('eris');
 var CreateHandler = require('github-webhook-handler');
 var config = require('./config');
 var route = require('./route');
-var handler = CreateHandler({path: '/webhook', secret: config.github.token});
+var handler = CreateHandler({path: config.web.path, secret: config.github.token});
 
 var githubHandler = function (req, res) {
   handler(req, res, function (err) {
@@ -27,7 +27,7 @@ var pingHandler = function (req, res) {
   res.end();
 };
 
-var middleware = route.comp([route.wrap('/webhook', githubHandler), route.wrap('/ping', pingHandler)]);
+var middleware = route.comp([route.wrap(config.web.path, githubHandler), route.wrap('/ping', pingHandler)]);
 
 var server = http.createServer(middleware);
 
