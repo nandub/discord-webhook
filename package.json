@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/nandub/discord-webhook#readme",
   "engines": {
-    "node": "6.2.0"
+    "node": "6.11.1"
   },
   "dependencies": {
     "eris": "0.3.0",
