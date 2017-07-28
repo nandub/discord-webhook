@@ -23,7 +23,7 @@
     "node": "6.11.1"
   },
   "dependencies": {
-    "eris": "0.3.0",
+    "eris": "0.7.0",
     "forky": "0.3.0",
     "github-webhook-handler": "0.6.0",
     "http": "0.0.0",

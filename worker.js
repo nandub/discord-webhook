@@ -110,7 +110,7 @@ handler.on('fork', function (data) {
 });
 
 handler.on('gollum', function (data) {
-  let sender = [`Wiki updated by ${data.payload.sender.login}`];
+  sender = [`Wiki updated by ${data.payload.sender.login}`];
   data.payload.pages.forEach(p => {
     sender.push(` \`${p.action}\` ${p.title}`);
   });
@@ -127,11 +127,11 @@ handler.on('issues', function (data) {
       createDiscordMessage(data.payload.repository.full_name, `${data.payload.issue.user.login} opened issue #${data.payload.issue.number}:\n ${data.payload.issue.title}\n${data.payload.issue.body}`);
       break;
     case 'reopened': {
-      let labels = data.payload.issue.labels.map(i => `\`[${i.name}]\``).join(' ');
+      labels = data.payload.issue.labels.map(i => `\`[${i.name}]\``).join(' ');
       createDiscordMessage(data.payload.repository.full_name, `${data.payload.sender.login} re-opened issue #${data.payload.issue.number}:\n ${data.payload.issue.title} ${labels}`);
       break;
     } case 'closed': {
-      let labels = data.payload.issue.labels.map(i => `\`[${i.name}]\``).join(' ');
+      labels = data.payload.issue.labels.map(i => `\`[${i.name}]\``).join(' ');
       createDiscordMessage(data.payload.repository.full_name, `${data.payload.sender.login} closed issue #${data.payload.issue.number}:\n ${data.payload.issue.title} ${labels}`);
       break;
     } case 'labeled':

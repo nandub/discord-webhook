@@ -19,15 +19,15 @@ function notFoundHandler(req, res) {
 
 function compose(mw) {
   return function (req, res) {
-    let next = function () {
+    next = function () {
       notFoundHandler.call(this, req, res);
     };
 
-    let i = mw.length;
+    i = mw.length;
     while (i) {
       i -= 1;
-      let thisMiddleware = mw[i];
-      let nextMiddleware = next;
+      thisMiddleware = mw[i];
+      nextMiddleware = next;
       next = function () {
         thisMiddleware.call(this, req, res, nextMiddleware);
       };
